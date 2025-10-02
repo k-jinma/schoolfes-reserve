@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約完了 - KATWALK体験</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .ticket-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .ticket-number {
+            font-size: 120px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .ticket-label {
+            text-align: center;
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .success-icon {
+            text-align: center;
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ticket-card">
+            <div class="success-icon">✅</div>
+            <h2 class="text-center mb-4">予約が完了しました！</h2>
+            
+            <div class="ticket-label">あなたの番号</div>
+            <div class="ticket-number" th:text="${reservation.ticketNumber}">123</div>
+            
+            <div class="info-section">
+                <h5>📧 メール通知について</h5>
+                <p class="mb-2">
+                    <strong th:text="${reservation.name}">お名前</strong> 様<br>
+                    <span th:text="${reservation.email}">email@example.com</span>
+                </p>
+                <p class="text-muted mb-0">
+                    順番が近づきましたらメールでお知らせします。<br>
+                    ブース前のモニターもご確認ください。
+                </p>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <strong>⏰ 体験時間:</strong> 約5分<br>
+                <strong>📍 場所:</strong> KATWALK体験ブース
+            </div>
+            
+            <div class="d-grid gap-2 mt-4">
+                <a href="/" class="btn btn-primary btn-lg">トップに戻る</a>
+                <a href="/monitor" class="btn btn-outline-secondary">モニター画面を見る</a>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    この画面をスクリーンショットしておくと便利です
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+2025-10-02 21:34:31.454184+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: テーブル "RESERESERVATIONS" が見つかりません
+Table "RESERESERVATIONS" not found; SQL statement:
+DELETE FROM reservations 
+WHERE id NOT IN (
+    SELECT MIN(id) 
+    FROM reseRESERVATIONS rvations 
+    GROUP BY ticket_number
+) [42102-232]

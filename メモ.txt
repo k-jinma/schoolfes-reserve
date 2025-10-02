@@ -1,0 +1,7 @@
+-- 重複レコードのうち、IDが小さいもの以外を削除
+DELETE FROM reservations 
+WHERE id NOT IN (
+    SELECT MIN(id) 
+    FROM reservations 
+    GROUP BY ticket_number
+);

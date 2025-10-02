@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理画面 - KATWALK予約システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .current-number-display {
+            font-size: 80px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+        }
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn-call-next {
+            font-size: 24px;
+            padding: 20px 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="admin-header">
+            <h1>🎮 KATWALK予約システム - 管理画面</h1>
+            <p class="mb-0">スタッフ用コントロールパネル</p>
+        </div>
+        
+        <div class="row">
+            <!-- 左側: 現在の状況 -->
+            <div class="col-md-4">
+                <div class="status-card">
+                    <h4 class="text-center mb-4">現在の番号</h4>
+                    <div class="current-number-display" th:text="${currentNumber}">0</div>
+                    
+                    <form th:action="@{/admin/next}" method="post" class="mt-4">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-call-next">
+                                📢 次の番号を呼ぶ
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="alert alert-info mt-4">
+                        <strong>待機中:</strong> <span th:text="${#lists.size(waitingList)}">0</span>人<br>
+                        <strong>次に発行される番号:</strong> <span th:text="${nextNumber}">1</span>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <h5>📊 システム情報</h5>
+                    <ul class="list-unstyled">
+                        <li>✅ データベース: 正常</li>
+                        <li>✅ メール送信: 有効</li>
+                        <li>🔄 自動更新: 有効</li>
+                    </ul>
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/" class="btn btn-outline-primary">予約画面</a>
+                        <a href="/monitor" class="btn btn-outline-secondary" target="_blank">モニター画面</a>
+                        <a href="/h2-console" class="btn btn-outline-info" target="_blank">H2 Console</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右側: 予約リスト -->
+            <div class="col-md-8">
+                <!-- 待機中の予約 -->
+                <div class="table-container mb-4">
+                    <h4 class="mb-3">⏳ 待機中の予約</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>番号</th>
+                                    <th>名前</th>
+                                    <th>メールアドレス</th>
+                                    <th>予約時刻</th>
+                                    <th>メール送信</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(waitingList)}">
+                                    <td colspan="5" class="text-center text-muted">待機中の予約はありません</td>
+                                </tr>
+                                <tr th:each="reservation : ${waitingList}">
+                                    <td>
+                                        <span class="badge bg-primary" 
+                                              th:text="${reservation.ticketNumber}"
+                                              style="font-size: 18px;">1</span>
+                                    </td>
+                                    <td th:text="${reservation.name}">山田太郎</td>
+                                    <td th:text="${reservation.email}">example@email.com</td>
+                                    <td th:text="${#temporals.format(reservation.createdAt, 'HH:mm')}">10:30</td>
+                                    <td>
+                                        <span th:if="${reservation.emailSent}" class="badge bg-success">送信済</span>
+                                        <span th:unless="${reservation.emailSent}" class="badge bg-secondary">未送信</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 全予約履歴 -->
+                <div class="table-container">
+                    <h4 class="mb-3">📋 全予約履歴</h4>
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm">
+                            <thead class="table-light" style="position: sticky; top: 0;">
+                                <tr>
+                                    <th>番号</th>
+                                    <th>名前</th>
+                                    <th>状態</th>
+                                    <th>予約時刻</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="reservation : ${allReservations}">
+                                    <td th:text="${reservation.ticketNumber}">1</td>
+                                    <td th:text="${reservation.name}">山田太郎</td>
+                                    <td>
+                                        <span th:if="${reservation.status == '待機中'}" 
+                                              class="badge bg-warning">待機中</span>
+                                        <span th:if="${reservation.status == '案内中'}" 
+                                              class="badge bg-info">案内中</span>
+                                        <span th:if="${reservation.status == '完了'}" 
+                                              class="badge bg-success">完了</span>
+                                    </td>
+                                    <td th:text="${#temporals.format(reservation.createdAt, 'HH:mm')}">10:30</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 30秒ごとに自動更新
+        setTimeout(function() {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>
