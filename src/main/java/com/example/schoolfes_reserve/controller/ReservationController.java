@@ -44,12 +44,18 @@ public class ReservationController {
     
     // 2. 予約作成
     @PostMapping("/reserve")
-    public String createReservation(@RequestParam String name, 
-                                  @RequestParam String email, 
+    public String createReservation(@RequestParam("name") String name, 
+                                  @RequestParam("email") String email, 
                                   Model model) {
-        // 入力チェック
-        if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
+        // 入力チェック（名前は10文字以内）
+        if (name == null || name.trim().isEmpty() || 
+            email == null || email.trim().isEmpty()) {
             model.addAttribute("error", "名前とメールアドレスを入力してください");
+            return "index";
+        }
+        
+        if (name.trim().length() > 10) {
+            model.addAttribute("error", "名前は10文字以内で入力してください");
             return "index";
         }
         
@@ -96,7 +102,7 @@ public class ReservationController {
     // 6. テスト用メール送信
     @GetMapping("/test-email")
     @ResponseBody
-    public String testEmail(@RequestParam String email) {
+    public String testEmail(@RequestParam("email") String email) {
         try {
             emailService.sendTestEmail(email);
             return "テストメール送信完了: " + email;

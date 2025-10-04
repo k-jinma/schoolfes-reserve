@@ -38,7 +38,7 @@ public class EmailService {
     public void sendTestEmail(String to) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("あなたのgmail@gmail.com");
+            message.setFrom("jinma.kazuhiro@gmail.com");
             message.setTo(to);
             message.setSubject("【テスト】KATWALK予約システム");
             message.setText("これはテストメールです。");

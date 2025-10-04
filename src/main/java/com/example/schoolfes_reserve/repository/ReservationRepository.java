@@ -42,7 +42,10 @@ public class ReservationRepository {
             return ps;
         }, keyHolder);
         
-        reservation.setId(keyHolder.getKey().longValue());
+        // IDのみを取得
+        Number generatedId = (Number) keyHolder.getKeys().get("ID");
+        reservation.setId(generatedId.longValue());
+        
         return reservation;
     }
     
