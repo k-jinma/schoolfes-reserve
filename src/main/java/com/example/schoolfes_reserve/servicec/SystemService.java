@@ -2,19 +2,24 @@ package com.example.schoolfes_reserve.servicec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.schoolfes_reserve.entity.Reservation;
 import com.example.schoolfes_reserve.entity.SystemStatus;
 import com.example.schoolfes_reserve.repository.SystemStatusRepository;
 
 @Service
+@Transactional
 public class SystemService {
-    
-    @Autowired
-    private SystemStatusRepository systemStatusRepository;
-    
-    @Autowired
-    private ReservationService reservationService;
+
+    private final SystemStatusRepository systemStatusRepository;
+    private final ReservationService reservationService;
+
+    public SystemService(SystemStatusRepository systemStatusRepository,
+                         ReservationService reservationService) {
+        this.systemStatusRepository = systemStatusRepository;
+        this.reservationService = reservationService;
+    }
     
     @Autowired
     private EmailService emailService;
@@ -36,8 +41,23 @@ public class SystemService {
         // メール通知処理を呼び出し
         sendNotificationEmails(status.getCurrentNumber());
     }
+
+    // 前の番号を呼び出し
+    public void callPreviousNumber() {
+        SystemStatus status = getCurrentStatus();
+        int cur = status.getCurrentNumber();
+
+        reservationService.updateReservationStatusByTicketNumber(cur, "待機中");
+        if (cur > 1) {
+            status.setCurrentNumber(cur - 1);
+            systemStatusRepository.save(status);
+            reservationService.updateReservationStatusByTicketNumber(status.getCurrentNumber(), "案内中");
+        }
+    }
+
     
     // 現在の番号を完了にして次を呼び出し
+
     public void completeCurrentAndCallNext() {
         SystemStatus status = getCurrentStatus();
         
@@ -67,5 +87,10 @@ public class SystemService {
             // メール送信フラグを更新
             reservationService.updateEmailSent(reservation.getId(), true);
         }
+    }
+
+    public int countRemainingAfterCurrent() {
+        int cur = getCurrentStatus().getCurrentNumber();
+        return reservationService.countRemainingAfter(cur);
     }
 }

@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,9 +17,12 @@ import com.example.schoolfes_reserve.entity.Reservation;
 
 @Repository
 public class ReservationRepository {
-    
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public ReservationRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
     
     // 予約を保存
     public Reservation save(Reservation reservation) {
@@ -123,5 +125,16 @@ public class ReservationRepository {
         reservation.setStatus(rs.getString("status"));
         reservation.setEmailSent(rs.getBoolean("email_sent"));
         return reservation;
+    }
+
+    public int countRemainingAfter(int currentNumber) {
+        String sql = """
+            SELECT COUNT(*)
+              FROM reservations
+             WHERE ticket_number > ?
+               AND status <> '完了'
+            """;
+        Integer cnt = jdbcTemplate.queryForObject(sql, Integer.class, currentNumber);
+        return cnt == null ? 0 : cnt;
     }
 }

@@ -18,12 +18,14 @@ import com.example.schoolfes_reserve.servicec.SystemService;
 
 @Controller
 public class ReservationController {
-    
+
+    private final SystemService systemService;
+
+    public ReservationController(SystemService systemService) {
+        this.systemService = systemService;
+    }
     @Autowired
     private ReservationService reservationService;
-    
-    @Autowired
-    private SystemService systemService;
     
     @Autowired
     private EmailService emailService;
@@ -98,8 +100,16 @@ public class ReservationController {
         systemService.completeCurrentAndCallNext();
         return "redirect:/admin";
     }
+
+    //6. 前の番号を呼び出し　(スタッフ操作)
+    @PostMapping("/admin/previous")
+    public String callPrevious() {
+        systemService.callPreviousNumber();
+        return "redirect:/admin";
+    }
+
     
-    // 6. テスト用メール送信
+    // 7. テスト用メール送信
     @GetMapping("/test-email")
     @ResponseBody
     public String testEmail(@RequestParam("email") String email) {
@@ -109,5 +119,17 @@ public class ReservationController {
         } catch (Exception e) {
             return "テストメール送信失敗: " + e.getMessage();
         }
+    }
+
+//     @GetMapping("/api/waiting-count")
+//     @ResponseBody
+//     public int getWaitingCount() {
+//         return reservationService.getWaitingCount();
+// }
+
+    @GetMapping("/api/waiting-count")
+    @ResponseBody
+    public int waitingCount() {
+        return systemService.countRemainingAfterCurrent();
     }
 }
