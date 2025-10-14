@@ -12,12 +12,17 @@ import com.example.schoolfes_reserve.repository.SystemStatusRepository;
 
 @Service
 public class ReservationService {
+    private final ReservationRepository reservationRepository;
+    private final SystemStatusRepository systemStatusRepository;
     
-    @Autowired
-    private ReservationRepository reservationRepository;
-    
-    @Autowired
-    private SystemStatusRepository systemStatusRepository;
+    public ReservationService(ReservationRepository reservationRepository, SystemStatusRepository systemStatusRepository) {
+        this.reservationRepository = reservationRepository;
+        this.systemStatusRepository = systemStatusRepository;
+    }
+
+    public int countRemainingAfter(int currentNumber) {
+        return reservationRepository.countRemainingAfter(currentNumber);
+    }
     
     // 新規予約作成
     public Reservation createReservation(String name, String email) {

@@ -2,7 +2,6 @@ package com.example.schoolfes_reserve.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +17,18 @@ import com.example.schoolfes_reserve.servicec.SystemService;
 
 @Controller
 public class ReservationController {
-    
-    @Autowired
+
+    private final SystemService systemService;
+
     private ReservationService reservationService;
     
-    @Autowired
-    private SystemService systemService;
-    
-    @Autowired
     private EmailService emailService;
+
+    public ReservationController(SystemService systemService,ReservationService reservationService,EmailService emailService) {
+        this.systemService = systemService;
+        this.reservationService = reservationService;
+        this.emailService = emailService;
+    }
     
     // 1. 予約画面（一般利用者用）
     @GetMapping("/")
@@ -98,8 +100,16 @@ public class ReservationController {
         systemService.completeCurrentAndCallNext();
         return "redirect:/admin";
     }
+
+    //6. 前の番号を呼び出し　(スタッフ操作)
+    @PostMapping("/admin/previous")
+    public String callPrevious() {
+        systemService.callPreviousNumber();
+        return "redirect:/admin";
+    }
+
     
-    // 6. テスト用メール送信
+    // 7. テスト用メール送信
     @GetMapping("/test-email")
     @ResponseBody
     public String testEmail(@RequestParam("email") String email) {
@@ -109,5 +119,17 @@ public class ReservationController {
         } catch (Exception e) {
             return "テストメール送信失敗: " + e.getMessage();
         }
+    }
+
+//     @GetMapping("/api/waiting-count")
+//     @ResponseBody
+//     public int getWaitingCount() {
+//         return reservationService.getWaitingCount();
+// }
+
+    @GetMapping("/api/waiting-count")
+    @ResponseBody
+    public int waitingCount() {
+        return systemService.countRemainingAfterCurrent();
     }
 }
