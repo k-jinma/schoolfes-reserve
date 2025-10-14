@@ -3,7 +3,6 @@ package com.example.schoolfes_reserve.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,10 +11,13 @@ import com.example.schoolfes_reserve.entity.SystemStatus;
 
 @Repository
 public class SystemStatusRepository {
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
     
+    public SystemStatusRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     // システム状態を取得
     public SystemStatus findById(Long id) {
         String sql = "SELECT id, current_number, next_number FROM system_status WHERE id = ?";

@@ -2,7 +2,6 @@ package com.example.schoolfes_reserve.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +20,15 @@ public class ReservationController {
 
     private final SystemService systemService;
 
-    public ReservationController(SystemService systemService) {
-        this.systemService = systemService;
-    }
-    @Autowired
     private ReservationService reservationService;
     
-    @Autowired
     private EmailService emailService;
+
+    public ReservationController(SystemService systemService,ReservationService reservationService,EmailService emailService) {
+        this.systemService = systemService;
+        this.reservationService = reservationService;
+        this.emailService = emailService;
+    }
     
     // 1. 予約画面（一般利用者用）
     @GetMapping("/")

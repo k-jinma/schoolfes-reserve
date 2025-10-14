@@ -14,15 +14,14 @@ public class SystemService {
 
     private final SystemStatusRepository systemStatusRepository;
     private final ReservationService reservationService;
-
+    private EmailService emailService;
     public SystemService(SystemStatusRepository systemStatusRepository,
-                         ReservationService reservationService) {
+                         ReservationService reservationService,
+                         EmailService emailService) {
         this.systemStatusRepository = systemStatusRepository;
         this.reservationService = reservationService;
+        this.emailService = emailService;
     }
-    
-    @Autowired
-    private EmailService emailService;
     
     // 現在のシステム状態を取得
     public SystemStatus getCurrentStatus() {
