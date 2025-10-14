@@ -56,9 +56,18 @@
                     <div class="current-number-display" th:text="${currentNumber}">0</div>
                     
                     <form th:action="@{/admin/next}" method="post" class="mt-4">
-                        <div class="d-grid">
+                        <div th:if="${!#lists.isEmpty(waitingList)}" class="d-grid">
+                            
                             <button type="submit" class="btn btn-primary btn-call-next">
                                 📢 次の番号を呼ぶ
+                            </button>
+                        </div>
+                    </form>
+
+                    <form th:action="@{/admin/previous}" method="post" class="mt-2">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-call-previous">
+                                ⏪ 前の番号に戻す
                             </button>
                         </div>
                     </form>
@@ -158,12 +167,39 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // 30秒ごとに自動更新
         setTimeout(function() {
             location.reload();
         }, 30000);
     </script>
+    <script>
+        // ボタンのグレー化
+    function updateButtonState() {
+        fetch("/api/waiting-count")
+            .then(response => response.json())
+            .then(count => {
+                const button = document.querySelector(".btn-call-next");
+
+                if (count === 0) {
+                    button.disabled = true;
+                    button.classList.remove("btn-primary");
+                    button.classList.add("btn-secondary");
+                } else {
+                    button.disabled = false;
+                    button.classList.remove("btn-secondary");
+                    button.classList.add("btn-primary");
+                }
+            })
+            .catch(error => console.error("予約数の取得に失敗しました:", error));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+    
+        setInterval(updateButtonState, 5000); // 5秒ごとに更新
+    });
+    </script> -->
+
 </body>
 </html>
