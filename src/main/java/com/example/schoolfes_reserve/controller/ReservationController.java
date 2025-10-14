@@ -37,7 +37,7 @@ public class ReservationController {
         
         model.addAttribute("waitingCount", waitingCount);
         model.addAttribute("currentNumber", status.getCurrentNumber());
-        model.addAttribute("estimatedWaitTime", waitingCount * 5); // 1人5分想定
+        model.addAttribute("estimatedWaitTime", waitingCount * 20); // 1人5分想定
         
         return "index";
     }
