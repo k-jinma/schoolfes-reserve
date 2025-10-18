@@ -1,4 +1,3 @@
-
 -- 予約テーブル
 CREATE TABLE IF NOT EXISTS reservations (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -14,5 +13,6 @@ CREATE TABLE IF NOT EXISTS reservations (
 CREATE TABLE IF NOT EXISTS system_status (
     id BIGINT PRIMARY KEY,
     current_number INTEGER DEFAULT 0,
-    next_number INTEGER DEFAULT 1
+    next_number INTEGER DEFAULT 1,
+    experience_time INTEGER DEFAULT 20
 );

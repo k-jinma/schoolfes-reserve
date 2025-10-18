@@ -1,110 +1,110 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KATWALK体験予約</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .card {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-radius: 15px;
-        }
-        .header {
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .btn-primary {
-            background: #667eea;
-            border: none;
-            padding: 12px 40px;
-            font-size: 18px;
-        }
-        .btn-primary:hover {
-            background: #764ba2;
-        }
-        .info-box {
-            background: rgba(255,255,255,0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 class="display-4">🎮 KATWALK体験予約</h1>
-            <p class="lead">VR空間を自由に歩き回れる体験をお楽しみください</p>
-        </div>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body p-4">
-                        <h3 class="card-title text-center mb-4">予約する</h3>
-                        
-                        <!-- 現在の状況 -->
-                        <div class="info-box">
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <h5>現在の番号</h5>
-                                    <h2 class="text-primary" th:text="${currentNumber}">0</h2>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KATWALK体験予約</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .card {
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                border-radius: 15px;
+            }
+            .header {
+                color: white;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .btn-primary {
+                background: #667eea;
+                border: none;
+                padding: 12px 40px;
+                font-size: 18px;
+            }
+            .btn-primary:hover {
+                background: #764ba2;
+            }
+            .info-box {
+                background: rgba(255,255,255,0.9);
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1 class="display-4">🎮 KATWALK体験予約</h1>
+                <p class="lead">VR空間を自由に歩き回れる体験をお楽しみください</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h3 class="card-title text-center mb-4">予約する</h3>
+                            
+                            <!-- 現在の状況 -->
+                            <div class="info-box">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <h5>現在の番号</h5>
+                                        <h2 class="text-primary" th:text="${currentNumber}">0</h2>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5>待ち人数</h5>
+                                        <h2 class="text-danger" th:text="${waitingCount}">0</h2>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <h5>待ち人数</h5>
-                                    <h2 class="text-danger" th:text="${waitingCount}">0</h2>
-                                </div>
-                            </div>
-                            <p class="text-center mt-2 mb-0">
-                                <small>予想待ち時間: 約<span th:text="${estimatedWaitTime}">0</span>分</small>
-                            </p>
-                        </div>
-                        
-                        <!-- エラーメッセージ -->
-                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-                        
-                        <!-- 予約フォーム -->
-                        <form th:action="@{/reserve}" method="post">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">お名前 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name" required 
-                                       placeholder="山田太郎">
+                                <p class="text-center mt-2 mb-0">
+                                    <small>予想待ち時間: 約<span th:text="${estimatedWaitTime}">0</span>分</small>
+                                </p>
                             </div>
                             
-                            <div class="mb-4">
-                                <label for="email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" name="email" required 
-                                       placeholder="example@email.com">
-                                <small class="text-muted">順番が近づいたらメールでお知らせします</small>
-                            </div>
+                            <!-- エラーメッセージ -->
+                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                             
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">予約する</button>
+                            <!-- 予約フォーム -->
+                            <form th:action="@{/reserve}" method="post">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">お名前 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required 
+                                        placeholder="山田太郎">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" required 
+                                        placeholder="example@email.com">
+                                    <small class="text-muted">順番が近づいたらメールでお知らせします</small>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">予約する</button>
+                                </div>
+                            </form>
+                            
+                            <div class="text-center mt-3">
+                                <small class="text-muted">体験時間: 約20分</small>
                             </div>
-                        </form>
-                        
-                        <div class="text-center mt-3">
-                            <small class="text-muted">体験時間: 約20分</small>
                         </div>
                     </div>
-                </div>
-                
-                <!-- リンク -->
-                <div class="text-center mt-3">
-                    <a href="/monitor" class="btn btn-light me-2">モニター画面</a>
-                    <a href="/admin" class="btn btn-secondary">管理画面</a>
+                    
+                    <!-- リンク -->
+                    <div class="text-center mt-3">
+                        <a href="/monitor" class="btn btn-light me-2">モニター画面</a>
+                        <a href="/admin" class="btn btn-secondary">管理画面</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

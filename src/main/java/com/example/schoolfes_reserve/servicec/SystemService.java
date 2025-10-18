@@ -1,6 +1,5 @@
 package com.example.schoolfes_reserve.servicec;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,8 @@ public class SystemService {
 
     private final SystemStatusRepository systemStatusRepository;
     private final ReservationService reservationService;
-    private EmailService emailService;
+    private final EmailService emailService;
+
     public SystemService(SystemStatusRepository systemStatusRepository,
                          ReservationService reservationService,
                          EmailService emailService) {
@@ -26,6 +26,13 @@ public class SystemService {
     // 現在のシステム状態を取得
     public SystemStatus getCurrentStatus() {
         return systemStatusRepository.findById(1L);
+    }
+
+    // 体験時間を更新（管理画面から呼び出す）
+    public void updateExperienceTime(int minutes) {
+        SystemStatus status = getCurrentStatus();
+        status.setExperienceTime(minutes);
+        systemStatusRepository.save(status);
     }
     
     // 次の番号を呼び出し
@@ -91,5 +98,9 @@ public class SystemService {
     public int countRemainingAfterCurrent() {
         int cur = getCurrentStatus().getCurrentNumber();
         return reservationService.countRemainingAfter(cur);
+    }
+
+    public int getExperienceTime() {
+        return getCurrentStatus().getExperienceTime();
     }
 }

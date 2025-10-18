@@ -20,9 +20,9 @@ public class ReservationController {
 
     private final SystemService systemService;
 
-    private ReservationService reservationService;
+    private final ReservationService reservationService;
     
-    private EmailService emailService;
+    private final EmailService emailService;
 
     public ReservationController(SystemService systemService,ReservationService reservationService,EmailService emailService) {
         this.systemService = systemService;
@@ -39,7 +39,9 @@ public class ReservationController {
         
         model.addAttribute("waitingCount", waitingCount);
         model.addAttribute("currentNumber", status.getCurrentNumber());
-        model.addAttribute("estimatedWaitTime", waitingCount * 20); // 1人20分想定
+        int experienceTime = systemService.getExperienceTime();
+        model.addAttribute("experienceTime", experienceTime);
+        model.addAttribute("estimatedWaitTime", waitingCount * experienceTime);
         
         return "index";
     }
@@ -90,8 +92,16 @@ public class ReservationController {
         model.addAttribute("allReservations", allReservations);
         model.addAttribute("currentNumber", status.getCurrentNumber());
         model.addAttribute("nextNumber", status.getNextNumber());
+        model.addAttribute("experienceTime", status.getExperienceTime());
         
         return "admin";
+    }
+
+    // 管理画面から体験時間を更新
+    @PostMapping("/admin/update-experience-time")
+    public String updateExperienceTime(@RequestParam("experienceTime") int experienceTime) {
+        systemService.updateExperienceTime(experienceTime);
+        return "redirect:/admin";
     }
     
     // 5. 次の番号を呼び出し（スタッフ操作）
@@ -108,7 +118,6 @@ public class ReservationController {
         return "redirect:/admin";
     }
 
-    
     // 7. テスト用メール送信
     @GetMapping("/test-email")
     @ResponseBody
@@ -121,12 +130,7 @@ public class ReservationController {
         }
     }
 
-//     @GetMapping("/api/waiting-count")
-//     @ResponseBody
-//     public int getWaitingCount() {
-//         return reservationService.getWaitingCount();
-// }
-
+    // 8. 現在の待機中人数を取得
     @GetMapping("/api/waiting-count")
     @ResponseBody
     public int waitingCount() {
