@@ -2,7 +2,6 @@ package com.example.schoolfes_reserve.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +17,18 @@ import com.example.schoolfes_reserve.servicec.SystemService;
 
 @Controller
 public class ReservationController {
+
+    private final SystemService systemService;
+
+    private final ReservationService reservationService;
     
-    @Autowired
-    private ReservationService reservationService;
-    
-    @Autowired
-    private SystemService systemService;
-    
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
+
+    public ReservationController(SystemService systemService,ReservationService reservationService,EmailService emailService) {
+        this.systemService = systemService;
+        this.reservationService = reservationService;
+        this.emailService = emailService;
+    }
     
     // 1. 予約画面（一般利用者用）
     @GetMapping("/")
@@ -37,7 +39,9 @@ public class ReservationController {
         
         model.addAttribute("waitingCount", waitingCount);
         model.addAttribute("currentNumber", status.getCurrentNumber());
-        model.addAttribute("estimatedWaitTime", waitingCount * 5); // 1人5分想定
+        int experienceTime = systemService.getExperienceTime();
+        model.addAttribute("experienceTime", experienceTime);
+        model.addAttribute("estimatedWaitTime", waitingCount * experienceTime);
         
         return "index";
     }
@@ -88,8 +92,16 @@ public class ReservationController {
         model.addAttribute("allReservations", allReservations);
         model.addAttribute("currentNumber", status.getCurrentNumber());
         model.addAttribute("nextNumber", status.getNextNumber());
+        model.addAttribute("experienceTime", status.getExperienceTime());
         
         return "admin";
+    }
+
+    // 管理画面から体験時間を更新
+    @PostMapping("/admin/update-experience-time")
+    public String updateExperienceTime(@RequestParam("experienceTime") int experienceTime) {
+        systemService.updateExperienceTime(experienceTime);
+        return "redirect:/admin";
     }
     
     // 5. 次の番号を呼び出し（スタッフ操作）
@@ -98,8 +110,15 @@ public class ReservationController {
         systemService.completeCurrentAndCallNext();
         return "redirect:/admin";
     }
-    
-    // 6. テスト用メール送信
+
+    //6. 前の番号を呼び出し　(スタッフ操作)
+    @PostMapping("/admin/previous")
+    public String callPrevious() {
+        systemService.callPreviousNumber();
+        return "redirect:/admin";
+    }
+
+    // 7. テスト用メール送信
     @GetMapping("/test-email")
     @ResponseBody
     public String testEmail(@RequestParam("email") String email) {
@@ -109,5 +128,12 @@ public class ReservationController {
         } catch (Exception e) {
             return "テストメール送信失敗: " + e.getMessage();
         }
+    }
+
+    // 8. 現在の待機中人数を取得
+    @GetMapping("/api/waiting-count")
+    @ResponseBody
+    public int waitingCount() {
+        return systemService.countRemainingAfterCurrent();
     }
 }

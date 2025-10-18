@@ -1,15 +1,17 @@
 package com.example.schoolfes_reserve.servicec;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
+    private final JavaMailSender mailSender;
     
-    @Autowired
-    private JavaMailSender mailSender;
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
     
     public void sendNotificationEmail(String to, String name, int ticketNumber) {
         try {
